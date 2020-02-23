@@ -1,13 +1,13 @@
 #from requests_oauthlib import OAuth1Session
 import requests
 import re
-import os
+import random
 
 #secret = 'ee2439ef1cdacc95'
 payload = { 'api_key': 'd40d7f5f310fddb83275b08199b49eea' }
-photos = []
 
 def flickr_search(tags):
+  photos = []
   payload['method'] = 'flickr.photos.search'
   payload['sort'] = 'relevance'
   payload['text'] = tags
@@ -35,7 +35,9 @@ def flickr_search(tags):
 
 def flickr_download(path):
   i = 0
+  random.shuffle(photos)
   for photo in photos:
+    if i > 133: path = './data/val/porcs'
     name = path + photo['photo_id'] + '.jpg'
     f = open(name, 'wb')
     f.write(requests.get('https://farm{farm_id}.staticflickr.com/{server_id}/{photo_id}_{secret}.jpg'.format(
@@ -49,13 +51,13 @@ def flickr_download(path):
     print(i)
 
 
-tags = 'hedgehog'
-path = './hedgehogs/'
-flickr_search(tags)
-flickr_download(path)
+#tags = 'hedgehog'
+#path = './hedgehogs/'
+#flickr_search(tags)
+#flickr_download(path)
 
 tags = 'porcupine'
-path = './porcupines/'
+path = './data/train/porcs/'
 flickr_search(tags)
 flickr_download(path)
 
