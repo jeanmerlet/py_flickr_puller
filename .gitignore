@@ -1,2 +1,4 @@
 *.jpg
 *.swp
+config.py
+__pycache__/

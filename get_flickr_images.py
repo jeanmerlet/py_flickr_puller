@@ -1,21 +1,20 @@
-#from requests_oauthlib import OAuth1Session
+import config
 import requests
 import re
 import random
 
-#secret = 'ee2439ef1cdacc95'
-payload = { 'api_key': 'd40d7f5f310fddb83275b08199b49eea' }
+payload = { 'api_key': config.FLICKR_KEY }
 
-def flickr_search(tags):
+def flickr_search(tag):
   photos = []
   payload['method'] = 'flickr.photos.search'
   payload['sort'] = 'relevance'
-  payload['text'] = tags
+  payload['text'] = tag
   payload['per_page'] = '200'
 
   r = requests.get('https://api.flickr.com/services/rest/', params=payload)
   text = r.text
-  print(text)
+  #print(text)
 
   p = re.compile('photo id="(\d*)')
   photo_ids = p.findall(text)
@@ -31,36 +30,39 @@ def flickr_search(tags):
                     'secret': secrets[i],
                     'farm_id': farm_ids[i],
                     'server_id': server_ids[i]})
-  print(photos)
+  #print(photos)
+  return photos
 
-def flickr_download(path):
+def flickr_download(base_path, photos, tag):
   i = 0
   random.shuffle(photos)
+  train_path = base_path + '/train/' + tag + 's/'
+  val_path = base_path + '/val/' + tag + 's/'
+  print(train_path, val_path)
   for photo in photos:
-    if i > 133: path = './data/val/porcs'
+    path = train_path if i < 133 else val_path
     name = path + photo['photo_id'] + '.jpg'
     f = open(name, 'wb')
-    f.write(requests.get('https://farm{farm_id}.staticflickr.com/{server_id}/{photo_id}_{secret}.jpg'.format(
+    try:
+      f.write(requests.get('https://farm{farm_id}.staticflickr.com/{server_id}/{photo_id}_{secret}.jpg'.format(
                              farm_id=photo['farm_id'],
                              server_id=photo['server_id'],
                              photo_id=photo['photo_id'],
                              secret=photo['secret']
                             )).content)
-    f.close()
+      f.close()
+    except requests.ConnectionError:
+      next
     i += 1
     print(i)
 
 
-#tags = 'hedgehog'
-#path = './hedgehogs/'
-#flickr_search(tags)
-#flickr_download(path)
+print(payload)
 
-tags = 'porcupine'
-path = './data/train/porcs/'
-flickr_search(tags)
-flickr_download(path)
+path = './data'
+tags = ['hedgehog', 'porcupine']
 
-
-
+for tag in tags:
+    photos = flickr_search(tag)
+    flickr_download(path, photos, tag)
 
