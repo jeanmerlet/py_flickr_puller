@@ -19,13 +19,13 @@ data_transforms = {
         transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]),
     'val': transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]),
 }
 
@@ -161,12 +161,12 @@ optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
-
-num_epochs = 1
+num_epochs = 3
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs)
 
 model_savepath = './data/models/'
 model_name = str(num_epochs) + '_epochs.pt'
 
 visualize_model(model_ft)
+input()
 torch.save(model_ft, model_savepath + model_name)
