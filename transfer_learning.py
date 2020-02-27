@@ -140,7 +140,7 @@ def visualize_model(model, num_images=6):
                 ax = plt.subplot(num_images//2, 2, images_so_far)
                 ax.axis('off')
                 ax.set_title('predicted: {}'.format(class_names[preds[j]]))
-                imshow(inputs.cpu().data[j])
+                show_sample_img_batch(inputs.cpu().data[j])
 
                 if images_so_far == num_images:
                     model.train(mode=was_training)

@@ -25,8 +25,8 @@ def load_model(model_path):
 #image = load_image(image_path)
 #model = load_model(model_path)
 
-image_tensor = load_image('./test_porc.jpg')
-model = load_model('./data/models/3_epochs.pt')
+image_tensor = load_image('./test_hedge3.jpg')
+model = load_model('./data/models/7_epochs.pt')
 
 output = model(image_tensor)
 print(output)
